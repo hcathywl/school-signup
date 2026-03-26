@@ -16,6 +16,7 @@
   --success-light: #d4edda;
   --font-body: 'Noto Sans TC', sans-serif;
 }
+html, body { width: 100%; }
 body { font-family: var(--font-body); background: var(--paper); color: var(--ink); min-height: 100vh; overflow-x: hidden; }
 body::before {
   content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
@@ -24,7 +25,7 @@ body::before {
 }
 /* ── HEADER ── */
 .site-header { position: relative; z-index: 10; border-bottom: 1px solid var(--border); background: rgba(250,249,246,0.95); backdrop-filter: blur(8px); padding: 0 24px; }
-.header-inner { max-width: 960px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; flex-wrap: wrap; gap: 8px; padding: 8px 0; }
+.header-inner { max-width: 100%; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; flex-wrap: wrap; gap: 8px; padding: 8px 0; }
 .site-title { font-family: 'DM Serif Display', serif; font-size: 20px; color: var(--ink); display: flex; align-items: center; gap: 8px; }
 .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block; transition: background 0.3s; flex-shrink: 0; }
 .sync-dot.ok { background: #2d7a4a; }
@@ -36,7 +37,7 @@ body::before {
 .nav-tab:hover { background: var(--paper-warm); color: var(--ink); }
 .nav-tab.active { background: var(--ink); color: #fff; }
 /* ── LAYOUT ── */
-.main { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
+.main { position: relative; z-index: 1; max-width: 100%; margin: 0 auto; padding: 24px 20px 60px; }
 .page { display: none; }
 .page.active { display: block; animation: fadeIn .22s ease; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -140,7 +141,7 @@ input:checked + .slider::before { transform: translateX(17px); }
 
 <!-- ════ 請將下一行的 URL 換成你的 Apps Script 網址 ════ -->
 <script>
-const API_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyWFMJs10C3lBaqPv9cppKIt7bRdhEVarOPU_TpMzygQMbHX-g_OdKlmTGF6h0GP0ao/exec';
 </script>
 <!-- ════════════════════════════════════════════════════ -->
 
@@ -664,6 +665,18 @@ async function init() {
   // Auto-refresh every 30 sec
   setInterval(() => loadData(), 30000);
 }
+
+// ── Auto-resize for iframe embedding (Google Sites) ──
+function notifyHeight() {
+  const h = document.body.scrollHeight;
+  if (window.parent !== window) {
+    window.parent.postMessage({ type: 'resize', height: h }, '*');
+  }
+}
+// Observe DOM changes to auto-update height
+const resizeObserver = new ResizeObserver(() => notifyHeight());
+resizeObserver.observe(document.body);
+window.addEventListener('load', notifyHeight);
 
 init();
 </script>
